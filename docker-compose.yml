@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  eureka:
+    image: springcloud/eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - micro-net
+
+  user-service:
+    image: my-dockerhub-user/user-service:latest   # comes from registry
+    depends_on:
+      - eureka
+    ports:
+      - "8081:8081"
+    networks:
+      - micro-net
+
+  order-service:
+    image: my-dockerhub-user/order-service:latest
+    depends_on:
+      - eureka
+    ports:
+      - "8082:8082"
+    networks:
+      - micro-net
+
+  product-service:
+    image: my-dockerhub-user/product-service:latest
+    depends_on:
+      - eureka
+    ports:
+      - "8083:8083"
+    networks:
+      - micro-net
+
+  gateway:
+    image: my-dockerhub-user/gateway:latest
+    depends_on:
+      - eureka
+      - user-service
+      - order-service
+      - product-service
+    ports:
+      - "8080:8080"
+    networks:
+      - micro-net
+
+networks:
+  micro-net:
+    driver: bridge
